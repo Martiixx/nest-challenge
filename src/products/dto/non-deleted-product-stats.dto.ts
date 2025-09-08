@@ -1,4 +1,3 @@
-
 export interface NonDeletedProductsStatsDto {
   percentage: number;
   totalNonDeleted: number;

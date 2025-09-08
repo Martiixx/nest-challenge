@@ -7,6 +7,6 @@ import { ProductsModule } from 'src/products/products.module';
 @Module({
   providers: [ExternalSyncService],
   controllers: [ExternalSyncController],
-  imports: [HttpModule, ProductsModule]
+  imports: [HttpModule, ProductsModule],
 })
 export class ExternalSyncModule {}

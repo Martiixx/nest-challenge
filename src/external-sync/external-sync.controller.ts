@@ -1,5 +1,10 @@
 import { Controller, Post, UseGuards } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 import { ExternalSyncService } from './external-sync.service';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
@@ -12,15 +17,15 @@ export class ExternalSyncController {
 
   @Post('trigger')
   @ApiOperation({ summary: 'Manually trigger external API synchronization' })
-  @ApiResponse({ 
-    status: 200, 
+  @ApiResponse({
+    status: 200,
     description: 'Synchronization completed successfully',
     schema: {
       type: 'object',
       properties: {
-        message: { type: 'string', example: 'Sync completed' }
-      }
-    }
+        message: { type: 'string', example: 'Sync completed' },
+      },
+    },
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 500, description: 'Synchronization failed' })

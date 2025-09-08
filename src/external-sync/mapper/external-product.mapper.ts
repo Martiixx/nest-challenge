@@ -1,5 +1,5 @@
-import { CreateProductDto } from "src/products/dto/create-product.dto";
-import { ExternalProductItem } from "../dto/external-api-response.dto";
+import { CreateProductDto } from 'src/products/dto/create-product.dto';
+import { ExternalProductItem } from '../dto/external-api-response.dto';
 
 export class ExternalProductMapper {
   static toProduct(item: ExternalProductItem): CreateProductDto {
@@ -17,11 +17,11 @@ export class ExternalProductMapper {
       stock: fields.stock,
       metadata: sys,
       externalCreatedAt: sys.createdAt,
-      externalUpdatedAt: sys.updatedAt
-    }
+      externalUpdatedAt: sys.updatedAt,
+    };
   }
 
   static toProducts(items: ExternalProductItem[]): Array<CreateProductDto> {
-    return items.map(item => this.toProduct(item));
+    return items.map((item) => this.toProduct(item));
   }
 }

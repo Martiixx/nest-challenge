@@ -1,4 +1,3 @@
-
 export interface LowStockStatsDto {
   percentage: number;
   count: number;

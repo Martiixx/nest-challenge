@@ -1,5 +1,12 @@
-import { ItemSys } from "src/external-sync/dto/external-api-response.dto";
-import { Column, CreateDateColumn, Entity, Index, PrimaryColumn, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { ItemSys } from 'src/external-sync/dto/external-api-response.dto';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  Index,
+  PrimaryColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 @Entity('products')
 export class Product {
@@ -42,9 +49,9 @@ export class Product {
   @Column({ type: 'boolean', default: true })
   isActive: boolean;
 
-  @Column({ type: 'jsonb', nullable: false})
+  @Column({ type: 'jsonb', nullable: false })
   metadata: ItemSys;
-  
+
   @CreateDateColumn()
   createdAt: Date;
 

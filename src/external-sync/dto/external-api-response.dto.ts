@@ -13,7 +13,7 @@ export interface ExternalProductItem {
     tags?: string[];
     concepts?: string[];
   };
-  sys: ItemSys,
+  sys: ItemSys;
   fields: ExternalProductFields;
 }
 

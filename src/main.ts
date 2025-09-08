@@ -8,7 +8,9 @@ async function bootstrap() {
   // Swagger configuration
   const config = new DocumentBuilder()
     .setTitle('Products API')
-    .setDescription('A comprehensive API for managing products with analytics and external synchronization')
+    .setDescription(
+      'A comprehensive API for managing products with analytics and external synchronization',
+    )
     .setVersion('1.0')
     .addBearerAuth(
       {

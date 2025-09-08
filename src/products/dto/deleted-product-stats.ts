@@ -1,4 +1,3 @@
-
 export interface DeletedProductsStatsDto {
   percentage: number;
   totalProducts: number;

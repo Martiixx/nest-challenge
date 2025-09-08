@@ -31,7 +31,9 @@ export class ProductsService {
     }
 
     if (category) {
-      queryBuilder.andWhere('product.category ILIKE :category', { category: `%${category}%` });
+      queryBuilder.andWhere('product.category ILIKE :category', {
+        category: `%${category}%`,
+      });
     }
 
     if (minPrice !== undefined) {
@@ -42,10 +44,7 @@ export class ProductsService {
       queryBuilder.andWhere('product.price <= :maxPrice', { maxPrice });
     }
 
-    queryBuilder
-      .orderBy('product.createdAt', 'DESC')
-      .skip(skip)
-      .take(limit);
+    queryBuilder.orderBy('product.createdAt', 'DESC').skip(skip).take(limit);
 
     const [data, total] = await queryBuilder.getManyAndCount();
     const totalPages = Math.ceil(total / limit);
@@ -91,7 +90,22 @@ export class ProductsService {
       .insert()
       .into(Product)
       .values(products)
-      .orUpdate(['name', 'price', 'brand', 'model', 'color', 'currency', 'stock', 'sku', 'metadata', 'externalCreatedAt', 'externalUpdatedAt'], ['id'])
+      .orUpdate(
+        [
+          'name',
+          'price',
+          'brand',
+          'model',
+          'color',
+          'currency',
+          'stock',
+          'sku',
+          'metadata',
+          'externalCreatedAt',
+          'externalUpdatedAt',
+        ],
+        ['id'],
+      )
       .returning('id')
       .execute();
   }
@@ -99,29 +113,32 @@ export class ProductsService {
   async getDeletedProductsPercentage(): Promise<DeletedProductsStatsDto> {
     const totalProducts = await this.productRepository.count();
     const deletedProducts = await this.productRepository.count({
-      where: { isActive: false }
+      where: { isActive: false },
     });
     const activeProducts = totalProducts - deletedProducts;
-    
-    const percentage = totalProducts > 0 ? (deletedProducts / totalProducts) * 100 : 0;
+
+    const percentage =
+      totalProducts > 0 ? (deletedProducts / totalProducts) * 100 : 0;
 
     return {
       percentage: Math.round(percentage * 100) / 100,
       totalProducts,
       deletedProducts,
       activeProducts,
-      message: `${deletedProducts} out of ${totalProducts} products are deleted (${percentage.toFixed(2)}%)`
+      message: `${deletedProducts} out of ${totalProducts} products are deleted (${percentage.toFixed(2)}%)`,
     };
   }
 
   async getNonDeletedProductsStats(
     fromDate?: Date,
-    toDate?: Date
+    toDate?: Date,
   ): Promise<NonDeletedProductsStatsDto> {
     const baseQuery = this.productRepository.createQueryBuilder('product');
-    
+
     if (fromDate) {
-      baseQuery.andWhere('product.externalCreatedAt >= :fromDate', { fromDate });
+      baseQuery.andWhere('product.externalCreatedAt >= :fromDate', {
+        fromDate,
+      });
     }
     if (toDate) {
       baseQuery.andWhere('product.externalCreatedAt <= :toDate', { toDate });
@@ -130,7 +147,9 @@ export class ProductsService {
     const totalProducts = await baseQuery.getCount();
 
     const nonDeletedQuery = baseQuery.clone();
-    nonDeletedQuery.andWhere('product.isActive = :isActive', { isActive: true });
+    nonDeletedQuery.andWhere('product.isActive = :isActive', {
+      isActive: true,
+    });
     const totalNonDeleted = await nonDeletedQuery.getCount();
 
     const withPriceQuery = nonDeletedQuery.clone();
@@ -139,11 +158,12 @@ export class ProductsService {
 
     const withoutPrice = totalNonDeleted - withPrice;
 
-    const percentage = totalProducts > 0 ? (totalNonDeleted / totalProducts) * 100 : 0;
+    const percentage =
+      totalProducts > 0 ? (totalNonDeleted / totalProducts) * 100 : 0;
 
     const dateRange = {
       from: fromDate || new Date('1970-01-01'),
-      to: toDate || new Date()
+      to: toDate || new Date(),
     };
 
     return {
@@ -152,29 +172,32 @@ export class ProductsService {
       withPrice,
       withoutPrice,
       dateRange,
-      message: `${totalNonDeleted} out of ${totalProducts} total products are non-deleted (${percentage.toFixed(2)}%) in the specified date range.`
+      message: `${totalNonDeleted} out of ${totalProducts} total products are non-deleted (${percentage.toFixed(2)}%) in the specified date range.`,
     };
   }
 
   async getLowStockProducts(threshold: number = 10): Promise<LowStockStatsDto> {
     const totalActiveProducts = await this.productRepository.count({
-      where: { isActive: true }
+      where: { isActive: true },
     });
 
     const lowStockCount = await this.productRepository
       .createQueryBuilder('product')
       .where('product.isActive = :isActive', { isActive: true })
-      .andWhere('(product.stock IS NOT NULL AND product.stock <= :threshold)', { threshold })
+      .andWhere('(product.stock IS NOT NULL AND product.stock <= :threshold)', {
+        threshold,
+      })
       .getCount();
 
-    const percentage = totalActiveProducts > 0 ? (lowStockCount / totalActiveProducts) * 100 : 0;
+    const percentage =
+      totalActiveProducts > 0 ? (lowStockCount / totalActiveProducts) * 100 : 0;
 
     return {
       percentage: Math.round(percentage * 100) / 100,
       count: lowStockCount,
       threshold,
       totalActiveProducts,
-      message: `${lowStockCount} out of ${totalActiveProducts} active products have low stock ${percentage.toFixed(2)}%`
+      message: `${lowStockCount} out of ${totalActiveProducts} active products have low stock ${percentage.toFixed(2)}%`,
     };
   }
 }

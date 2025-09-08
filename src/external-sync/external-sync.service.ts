@@ -2,7 +2,10 @@ import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger, OnApplicationBootstrap } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ProductsService } from 'src/products/products.service';
-import { ExternalApiResponse, ExternalProductItem } from './dto/external-api-response.dto';
+import {
+  ExternalApiResponse,
+  ExternalProductItem,
+} from './dto/external-api-response.dto';
 import { AxiosRequestConfig } from 'axios';
 import { firstValueFrom } from 'rxjs';
 import { Cron, CronExpression } from '@nestjs/schedule';
@@ -44,9 +47,15 @@ export class ExternalSyncService implements OnApplicationBootstrap {
 
   async fetchAllProducts(): Promise<ExternalProductItem[]> {
     const space_id = this.configService.get<string>('CONTENTFUL_SPACE_ID');
-    const access_token = this.configService.get<string>('CONTENTFUL_ACCESS_TOKEN');
-    const environment_id = this.configService.get<string>('CONTENTFUL_ENVIRONMENT');
-    const content_type = this.configService.get<string>('CONTENTFUL_CONTENT_TYPE');
+    const access_token = this.configService.get<string>(
+      'CONTENTFUL_ACCESS_TOKEN',
+    );
+    const environment_id = this.configService.get<string>(
+      'CONTENTFUL_ENVIRONMENT',
+    );
+    const content_type = this.configService.get<string>(
+      'CONTENTFUL_CONTENT_TYPE',
+    );
     const contentful_url = this.configService.get<string>('CONTENTFUL_URL');
     const uri = `/spaces/${space_id}/environments/${environment_id}/entries?access_token=${access_token}&content_type=${content_type}`;
     const full_url = contentful_url + uri;
@@ -59,17 +68,17 @@ export class ExternalSyncService implements OnApplicationBootstrap {
     while (processing) {
       const config: AxiosRequestConfig = {
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
         params: {
           skip,
           limit,
         },
-      }
+      };
 
       try {
         const response = await firstValueFrom(
-          this.httpService.get<ExternalApiResponse>(full_url, config)
+          this.httpService.get<ExternalApiResponse>(full_url, config),
         );
         const { items, total } = response.data;
         allItems = [...allItems, ...items];
@@ -77,8 +86,9 @@ export class ExternalSyncService implements OnApplicationBootstrap {
         skip += items.length;
         processing = skip < total;
 
-        this.logger.debug(`Fetched ${items.length} items (${allItems.length}/${total})`);
-        
+        this.logger.debug(
+          `Fetched ${items.length} items (${allItems.length}/${total})`,
+        );
       } catch (error) {
         this.logger.error(`Failed to fetch products at skip = ${skip}`, error);
         throw error;
@@ -89,7 +99,7 @@ export class ExternalSyncService implements OnApplicationBootstrap {
   }
 
   async syncProductsToDatabase(products: ExternalProductItem[]) {
-    const productsMapped = ExternalProductMapper.toProducts(products)
+    const productsMapped = ExternalProductMapper.toProducts(products);
     const result = await this.productsService.createMany(productsMapped);
     this.logger.log(`Processed ${result.identifiers.length} products`);
     return result.identifiers.length;
@@ -100,5 +110,4 @@ export class ExternalSyncService implements OnApplicationBootstrap {
     await this.syncProducts();
     return { message: 'Sync completed' };
   }
-
 }
