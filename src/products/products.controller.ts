@@ -1,16 +1,21 @@
-import { Controller, Get, Query, Delete, Param, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Query, Delete, Param, HttpCode, HttpStatus, UseGuards } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { PaginationDto, PaginatedResultDto } from './dto/pagination.dto';
 import { Product } from '../entities/product.entity';
 import { DeletedProductsStatsDto } from './dto/deleted-product-stats';
 import { NonDeletedProductsStatsDto } from './dto/non-deleted-product-stats.dto';
 import { LowStockStatsDto } from './dto/low-stock-stats.dto';
+import { Public } from 'src/auth/public.decorator';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { CurrentUser, User } from 'src/auth/user.decorator';
 
 @Controller('products')
+@UseGuards(JwtAuthGuard)
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
   @Get()
+  @Public()
   async findAll(@Query() paginationDto: PaginationDto): Promise<PaginatedResultDto<Product>> {
     const limitedPaginationDto = {
       ...paginationDto,
@@ -20,6 +25,7 @@ export class ProductsController {
   }
 
   @Delete(':id')
+  @Public()
   @HttpCode(HttpStatus.NO_CONTENT)
   async remove(@Param('id') id: string): Promise<void> {
     return this.productsService.remove(id);
