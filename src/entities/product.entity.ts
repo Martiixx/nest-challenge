@@ -10,7 +10,6 @@ export class Product {
   @Index()
   sku: string;
 
-
   @Column({ type: 'varchar', length: 255 })
   @Index()
   name: string;

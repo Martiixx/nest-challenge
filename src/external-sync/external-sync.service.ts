@@ -6,7 +6,6 @@ import { ExternalApiResponse, ExternalProductItem } from './dto/external-api-res
 import { AxiosRequestConfig } from 'axios';
 import { firstValueFrom } from 'rxjs';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { Product } from 'src/entities/product.entity';
 import { ExternalProductMapper } from './mapper/external-product.mapper';
 
 @Injectable()
