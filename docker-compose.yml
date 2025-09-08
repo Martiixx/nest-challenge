@@ -6,4 +6,13 @@ services:
     ports:
       - "5432:5432"
     environment:
+      POSTGRES_DB: product_db
+      POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres123
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d product_db"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
