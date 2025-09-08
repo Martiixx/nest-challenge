@@ -23,13 +23,6 @@ export class ProductsService {
 
     queryBuilder.where('product.isActive = :isActive', { isActive: true });
 
-    if (search) {
-      queryBuilder.andWhere(
-        '(product.name ILIKE :search OR product.description ILIKE :search)',
-        { search: `%${search}%` },
-      );
-    }
-
     if (name) {
       queryBuilder.andWhere('product.name ILIKE :name', { name: `%${name}%` });
     }
@@ -47,7 +40,6 @@ export class ProductsService {
     }
 
     queryBuilder
-      .where('product.isActive = :isActive', { isActive: true })
       .orderBy('product.createdAt', 'DESC')
       .skip(skip)
       .take(limit);
