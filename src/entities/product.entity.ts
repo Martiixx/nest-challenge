@@ -10,9 +10,6 @@ export class Product {
   @Index()
   sku: string;
 
-  @Column({ type: 'varchar', length: 100, unique: true })
-  @Index()
-  externalId: string;
 
   @Column({ type: 'varchar', length: 255 })
   @Index()
@@ -40,6 +37,9 @@ export class Product {
   @Index()
   currency: string;
 
+  @Column({ type: 'int', nullable: true })
+  stock: number;
+
   @Column({ type: 'boolean', default: true })
   isActive: boolean;
 
@@ -53,8 +53,10 @@ export class Product {
   updatedAt: Date;
 
   @CreateDateColumn()
+  @Index()
   externalCreatedAt: Date;
 
   @UpdateDateColumn()
+  @Index()
   externalUpdatedAt: Date;
 }

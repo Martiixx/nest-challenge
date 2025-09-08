@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsInt, IsOptional, Max, Min } from 'class-validator';
+import { IsInt, IsOptional, Max, Min, IsNumber, IsString } from 'class-validator';
 
 export class PaginationDto {
   @Type(() => Number)
@@ -16,10 +16,28 @@ export class PaginationDto {
   limit: number = 5;
 
   @IsOptional()
+  @IsString()
   search?: string;
 
   @IsOptional()
+  @IsString()
+  name?: string;
+
+  @IsOptional()
+  @IsString()
   category?: string;
+
+  @Type(() => Number)
+  @IsNumber()
+  @Min(0)
+  @IsOptional()
+  minPrice?: number;
+
+  @Type(() => Number)
+  @IsNumber()
+  @Min(0)
+  @IsOptional()
+  maxPrice?: number;
 }
 
 export class PaginatedResultDto<T> {

@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, ILike } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Product } from '../entities/product.entity';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
@@ -13,18 +13,15 @@ export class ProductsService {
     private readonly productRepository: Repository<Product>,
   ) {}
 
-  // async create(createProductDto: CreateProductDto): Promise<Product> {
-  //   const product = this.productRepository.create(createProductDto);
-  //   return await this.productRepository.save(product);
-  // }
-
   async findAll(
     paginationDto: PaginationDto,
   ): Promise<PaginatedResultDto<Product>> {
-    const { page, limit, search, category } = paginationDto;
+    const { page, limit, search, name, category, minPrice, maxPrice } = paginationDto;
     const skip = (page - 1) * limit;
 
     const queryBuilder = this.productRepository.createQueryBuilder('product');
+
+    queryBuilder.where('product.isActive = :isActive', { isActive: true });
 
     if (search) {
       queryBuilder.andWhere(
@@ -33,8 +30,20 @@ export class ProductsService {
       );
     }
 
+    if (name) {
+      queryBuilder.andWhere('product.name ILIKE :name', { name: `%${name}%` });
+    }
+
     if (category) {
-      queryBuilder.andWhere('product.category = :category', { category });
+      queryBuilder.andWhere('product.category ILIKE :category', { category: `%${category}%` });
+    }
+
+    if (minPrice !== undefined) {
+      queryBuilder.andWhere('product.price >= :minPrice', { minPrice });
+    }
+
+    if (maxPrice !== undefined) {
+      queryBuilder.andWhere('product.price <= :maxPrice', { maxPrice });
     }
 
     queryBuilder
@@ -69,7 +78,7 @@ export class ProductsService {
     id: string,
     updateProductDto: UpdateProductDto,
   ): Promise<Product> {
-    await this.findOne(id); // Check if exists
+    await this.findOne(id);
     await this.productRepository.update(id, updateProductDto);
     return this.findOne(id);
   }
@@ -87,7 +96,7 @@ export class ProductsService {
       .insert()
       .into(Product)
       .values(products)
-      .orUpdate(['name', 'price', 'updatedAt', 'brand', 'model', 'color', 'currency', 'stock', 'sku', 'metadata'], ['id'])
+      .orUpdate(['name', 'price', 'brand', 'model', 'color', 'currency', 'stock', 'sku', 'metadata', 'externalCreatedAt', 'externalUpdatedAt'], ['id'])
       .returning('id')
       .execute();
   }

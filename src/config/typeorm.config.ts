@@ -13,5 +13,5 @@ export const getTypeOrmConfig = (
   database: configService.get('DB_DATABASE'),
   entities: [Product],
   synchronize: configService.get('NODE_ENV') === 'development',
-  logging: configService.get('NODE_ENV') === 'development',
+  logging: ['error'],
 });

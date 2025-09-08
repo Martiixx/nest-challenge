@@ -1,5 +1,5 @@
 import { HttpService } from '@nestjs/axios';
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, OnApplicationBootstrap } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ProductsService } from 'src/products/products.service';
 import { ExternalApiResponse, ExternalProductItem } from './dto/external-api-response.dto';
@@ -10,7 +10,7 @@ import { Product } from 'src/entities/product.entity';
 import { ExternalProductMapper } from './mapper/external-product.mapper';
 
 @Injectable()
-export class ExternalSyncService {
+export class ExternalSyncService implements OnApplicationBootstrap {
   private readonly logger = new Logger(ExternalSyncService.name);
 
   constructor(
@@ -19,6 +19,17 @@ export class ExternalSyncService {
     private readonly productsService: ProductsService,
   ) {}
 
+  async onApplicationBootstrap() {
+    this.logger.log('Application started - triggering initial sync...');
+    setTimeout(async () => {
+      try {
+        await this.triggerSync();
+      } catch (error) {
+        this.logger.error('Initial sync failed:', error);
+      }
+    }, 2000);
+  }
+
   @Cron(CronExpression.EVERY_HOUR)
   async syncProducts() {
     this.logger.log('Starting product sync...');
@@ -26,7 +37,7 @@ export class ExternalSyncService {
     try {
       const products = await this.fetchAllProducts();
       const syncedCount = await this.syncProductsToDatabase(products);
-      this.logger.log(`Succesfully synced ${syncedCount}`);
+      this.logger.log(`Succesfully synced ${syncedCount} products`);
     } catch (error) {
       this.logger.error('Failed to sync products', error);
     }
@@ -82,6 +93,7 @@ export class ExternalSyncService {
     const productsMapped = ExternalProductMapper.toProducts(products)
     const result = await this.productsService.createMany(productsMapped);
     this.logger.log(`Processed ${result.identifiers.length} products`);
+    return result.identifiers.length;
   }
 
   async triggerSync() {
