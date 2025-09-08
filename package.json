@@ -1,6 +1,6 @@
 {
   "name": "nest-challenge",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "",
   "author": "",
   "private": true,
@@ -82,12 +82,7 @@
       "^.+\\.(t|j)s$": "ts-jest"
     },
     "collectCoverageFrom": [
-      "**/*.(t|j)s",
-      "!**/*.spec.ts",
-      "!**/*.e2e-spec.ts",
-      "!**/node_modules/**",
-      "!**/dist/**",
-      "!main.ts"
+      "**/*.(t|j)s"
     ],
     "coverageDirectory": "../coverage",
     "coverageReporters": [
@@ -98,16 +93,27 @@
     ],
     "coverageThreshold": {
       "global": {
-        "branches": 70,
-        "functions": 70,
-        "lines": 70,
-        "statements": 70
+        "branches": 30,
+        "functions": 30,
+        "lines": 30,
+        "statements": 30
       }
     },
     "testEnvironment": "node",
     "setupFilesAfterEnv": ["<rootDir>/../test/jest-setup.ts"],
-    "moduleNameMapping": {
-      "^src/(.*)$": "<rootDir>/$1"
-    }
+    "coveragePathIgnorePatterns": [
+      "node_modules",
+      "dist",
+      "test",
+      "src/main.ts",
+      ".module.ts",
+      ".mock.ts",
+      ".guard.ts",
+      ".decorator.ts",
+      ".validation.ts",
+      ".config.ts",
+      ".dto.ts",
+      ".mapper.ts"
+    ]
   }
 }

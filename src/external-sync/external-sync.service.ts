@@ -1,7 +1,7 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger, OnApplicationBootstrap } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { ProductsService } from 'src/products/products.service';
+import { ProductsService } from '../products/products.service';
 import {
   ExternalApiResponse,
   ExternalProductItem,

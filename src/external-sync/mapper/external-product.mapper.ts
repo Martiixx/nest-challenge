@@ -1,4 +1,4 @@
-import { CreateProductDto } from 'src/products/dto/create-product.dto';
+import { CreateProductDto } from '../../products/dto/create-product.dto';
 import { ExternalProductItem } from '../dto/external-api-response.dto';
 
 export class ExternalProductMapper {

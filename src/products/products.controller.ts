@@ -22,8 +22,8 @@ import { Product } from '../entities/product.entity';
 import { DeletedProductsStatsDto } from './dto/deleted-product-stats';
 import { NonDeletedProductsStatsDto } from './dto/non-deleted-product-stats.dto';
 import { LowStockStatsDto } from './dto/low-stock-stats.dto';
-import { Public } from 'src/auth/public.decorator';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { Public } from '../auth/public.decorator';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @ApiTags('products')
 @Controller('products')
