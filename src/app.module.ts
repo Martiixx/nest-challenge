@@ -6,6 +6,7 @@ import { getTypeOrmConfig } from './config/typeorm.config';
 import { ProductsModule } from './products/products.module';
 import { ExternalSyncModule } from './external-sync/external-sync.module';
 import { EnvConfiguration } from './config/evn.config';
+import { ScheduleModule } from '@nestjs/schedule';
 
 
 @Module({
@@ -21,6 +22,7 @@ import { EnvConfiguration } from './config/evn.config';
       useFactory: getTypeOrmConfig,
       inject: [ConfigService],
     }),
+    ScheduleModule.forRoot(),
     ProductsModule,
     ExternalSyncModule,
   ],

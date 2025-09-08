@@ -20,16 +20,16 @@ export interface ExternalProductItem {
 export interface ExternalProductFields {
   sku: string;
   name: string;
-  brand?: string;
-  model?: string;
-  category?: string;
-  color?: string;
+  brand: string;
+  model: string;
+  category: string;
+  color: string;
   price: number;
-  currency?: string;
-  stock?: number;
+  currency: string;
+  stock: number;
 }
 
-interface ItemSys {
+export interface ItemSys {
   space?: {
     sys: {
       type: string;
@@ -39,8 +39,8 @@ interface ItemSys {
   };
   id: string;
   type: string;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date;
+  updatedAt: Date;
   environment?: {
     sys: {
       id: string;

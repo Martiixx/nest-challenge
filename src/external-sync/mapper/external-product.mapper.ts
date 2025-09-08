@@ -1,9 +1,11 @@
+import { CreateProductDto } from "src/products/dto/create-product.dto";
 import { ExternalProductItem } from "../dto/external-api-response.dto";
 
 export class ExternalProductMapper {
   static toProduct(item: ExternalProductItem): CreateProductDto {
-    const { fields } = item;
+    const { fields, sys } = item;
     return {
+      id: sys.id,
       sku: fields.sku,
       name: fields.name,
       brand: fields.brand,
@@ -12,7 +14,10 @@ export class ExternalProductMapper {
       color: fields.color,
       price: fields.price,
       currency: fields.currency,
-      stock: fields.stock
+      stock: fields.stock,
+      metadata: sys,
+      externalCreatedAt: sys.createdAt,
+      externalUpdatedAt: sys.updatedAt
     }
   }
 
