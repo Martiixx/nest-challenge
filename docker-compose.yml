@@ -16,3 +16,41 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
+    networks:
+      - app-network
+
+  nest-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: development
+      DB_HOST: product-db
+      DB_PORT: 5432
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres123
+      DB_DATABASE: product_db
+      JWT_SECRET: a-string-secret-at-least-256-bits-long
+      CONTENTFUL_URL: ${CONTENTFUL_URL:-https://cdn.contentful.com}
+      CONTENTFUL_SPACE_ID: ${CONTENTFUL_SPACE_ID:-}
+      CONTENTFUL_ACCESS_TOKEN: ${CONTENTFUL_ACCESS_TOKEN:-}
+      CONTENTFUL_ENVIRONMENT: ${CONTENTFUL_ENVIRONMENT:-master}
+      CONTENTFUL_CONTENT_TYPE: ${CONTENTFUL_CONTENT_TYPE:-product}
+    depends_on:
+      product-db:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - app-network
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+
+volumes:
+  postgres_data:
+
+networks:
+  app-network:
+    driver: bridge
